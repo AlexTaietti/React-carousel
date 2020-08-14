@@ -52,7 +52,7 @@ const SHAPES = [['heart', `#heart {
   width: 96px;
   box-sizing: content-box;
   height: 48px;
-  background: #eee;
+  background: white;
   border-color: black;
   border-style: solid;
   border-width: 2px 2px 50px 2px;
@@ -67,7 +67,7 @@ const SHAPES = [['heart', `#heart {
   position: absolute;
   top: 50%;
   left: 0;
-  background: #eee;
+  background: white;
   border: 18px solid black;
   border-radius: 100%;
   width: 12px;
@@ -83,7 +83,7 @@ const SHAPES = [['heart', `#heart {
   top: 50%;
   left: 50%;
   background: black;
-  border: 18px solid #eee;
+  border: 18px solid white;
   border-radius: 100%;
   width: 12px;
   height: 12px;
