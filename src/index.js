@@ -2,6 +2,7 @@ import React, {Component, useState} from 'react';
 import ReactDOM from 'react-dom';
 import './index.scss';
 
+
 const SHAPES = [['heart', `#heart {
 
   position: relative;
@@ -46,9 +47,7 @@ const SHAPES = [['heart', `#heart {
   border-bottom-left-radius: 60px;
   border-bottom-right-radius: 60px;
 
-}`
-
-], ['yin-yang', `#yin-yang {
+}`], ['yin-yang', `#yin-yang {
 
   width: 96px;
   box-sizing: content-box;
@@ -93,13 +92,13 @@ const SHAPES = [['heart', `#heart {
 }`], ['cut-diamond', `#cut-diamond {
 
   border-style: solid;
-  border-color: transparent transparent red transparent;
+  border-color: transparent transparent DodgerBlue transparent;
   border-width: 0 25px 25px 25px;
   height: 0;
   width: 50px;
   box-sizing: content-box;
   position: relative;
-  margin: 20px 0 50px 0;
+  margin-bottom: 50px;
 
 }
 
@@ -112,48 +111,42 @@ const SHAPES = [['heart', `#heart {
   width: 0;
   height: 0;
   border-style: solid;
-  border-color: red transparent transparent transparent;
+  border-color: DodgerBlue transparent transparent transparent;
   border-width: 70px 50px 0 50px;
 
-}`], ['space-invader', `#space-invader {
+}`], ['infinity', `#infinity {
 
-  box-shadow: 0 0 0 1em green,
-  0 1em 0 1em green,
-  -2.5em 1.5em 0 .5em green,
-  2.5em 1.5em 0 .5em green,
-  -3em -3em 0 0 green,
-  3em -3em 0 0 green,
-  -2em -2em 0 0 green,
-  2em -2em 0 0 green,
-  -3em -1em 0 0 green,
-  -2em -1em 0 0 green,
-  2em -1em 0 0 green,
-  3em -1em 0 0 green,
-  -4em 0 0 0 green,
-  -3em 0 0 0 green,
-  3em 0 0 0 green,
-  4em 0 0 0 green,
-  -5em 1em 0 0 green,
-  -4em 1em 0 0 green,
-  4em 1em 0 0 green,
-  5em 1em 0 0 green,
-  -5em 2em 0 0 green,
-  5em 2em 0 0 green,
-  -5em 3em 0 0 green,
-  -3em 3em 0 0 green,
-  3em 3em 0 0 green,
-  5em 3em 0 0 green,
-  -2em 4em 0 0 green,
-  -1em 4em 0 0 green,
-  1em 4em 0 0 green,
-  2em 4em 0 0 green;
-  background: green;
-  width: 1em;
-  height: 1em;
-  overflow: hidden;
-  margin: 50px 0 50px 0;
+  position: relative;
+  width: 212px;
+  height: 100px;
+  box-sizing: content-box;
+
+}
+
+#infinity::before, #infinity::after {
+
+  content: "";
+  box-sizing: content-box;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 60px;
+  height: 60px;
+  border: 20px solid green;
+  border-radius: 50px 50px 0 50px;
+  transform: rotate(-45deg);
+
+}
+
+#infinity::after {
+
+  left: auto;
+  right: 0;
+  border-radius: 50px 50px 50px 0;
+  transform: rotate(45deg);
 
 }`]];
+
 
 class App extends Component{
 
@@ -185,7 +178,7 @@ class App extends Component{
             <h1>“The Shapes of CSS”</h1>
             <h2>from CSS Tricks</h2>
             <p>an incredibly clever article written by <span>Chris Coyier</span>,</p>
-            <p>shamelessly copied (only a part) by me</p>
+            <p>shamelessly copied (only a little part) by me</p>
         </div>
 
         <Carousel parentUpdate={ this.update } shapes={this.props.shapes} />
@@ -199,6 +192,7 @@ class App extends Component{
   }
 
 }
+
 
 class Carousel extends Component {
 
@@ -234,11 +228,11 @@ class Carousel extends Component {
 
       <div className={ "carousel carousel--" + this.props.shapes[this.state.currentIndex][0] }>
 
-        <div onClick={() => this.showPrevious(this.state.currentIndex) } className="controls controls--back"><span>&lt;</span></div>
+        <div onClick={() => this.showPrevious(this.state.currentIndex) } className="controls controls--back"><span></span></div>
 
-        <Slide key={this.props.shapes[this.state.currentIndex][0]} shape={this.props.shapes[this.state.currentIndex][0]} />
+        <Slide key={this.props.shapes[this.state.currentIndex]} shape={this.props.shapes[this.state.currentIndex]} />
 
-        <div onClick={() => this.showNext(this.state.currentIndex) } className="controls controls--next"><span>&gt;</span></div>
+        <div onClick={() => this.showNext(this.state.currentIndex) } className="controls controls--next"><span></span></div>
 
       </div>
 
@@ -248,15 +242,44 @@ class Carousel extends Component {
 
 }
 
+
 class Slide extends Component {
+
+  constructor () {
+
+    super();
+
+    this.state = { shapeCopied: false }
+
+  }
+
+  copyCSS(shapeCSS){
+
+    navigator.clipboard.writeText(shapeCSS).then(() => {
+
+      console.log( "Successfully copied CSS to clipboard" );
+
+      this.setState({ shapeCopied: true });
+
+      setTimeout(() => { this.setState({ shapeCopied: false }) }, 2000);
+
+    }, () => {
+
+      console.log( "Error: couldn't copy to clipboard :(" );
+
+    });
+
+  }
 
   render () {
 
     return (
 
-      <div key={this.props.shape} className={ "slide slide--" + this.props.shape }>
+      <div key={this.props.shape[0]} className={ "slide slide--" + this.props.shape[0] }>
 
-        <div className={ "slide__shape slide__shape--" + this.props.shape }></div>
+        <h6 className={ "slide__copy-message " + (this.state.shapeCopied ? 'show' : 'nope') }>I am in your Clipboard!</h6>
+
+        <div onClick={ () => this.copyCSS(this.props.shape[1]) } className={ "slide__shape slide__shape--" + this.props.shape[0] }></div>
 
       </div>
 
@@ -265,6 +288,7 @@ class Slide extends Component {
   }
 
 }
+
 
 class Code extends Component {
 
@@ -285,5 +309,6 @@ class Code extends Component {
   }
 
 }
+
 
 ReactDOM.render( <App shapes={SHAPES} />, document.getElementById('app') );
