@@ -117,8 +117,8 @@ const SHAPES = [['heart', `#heart {
 }`], ['infinity', `#infinity {
 
   position: relative;
-  width: 212px;
-  height: 100px;
+  width: 150px;
+  height: 80px;
   box-sizing: content-box;
 
 }
@@ -130,10 +130,10 @@ const SHAPES = [['heart', `#heart {
   position: absolute;
   top: 0;
   left: 0;
-  width: 60px;
-  height: 60px;
-  border: 20px solid green;
-  border-radius: 50px 50px 0 50px;
+  width: 40px;
+  height: 40px;
+  border: 15px solid green;
+  border-radius: 40px 40px 0 40px;
   transform: rotate(-45deg);
 
 }
@@ -142,7 +142,7 @@ const SHAPES = [['heart', `#heart {
 
   left: auto;
   right: 0;
-  border-radius: 50px 50px 50px 0;
+  border-radius: 40px 40px 40px 0;
   transform: rotate(45deg);
 
 }`]];
