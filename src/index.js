@@ -1,5 +1,6 @@
 import React, {Component, useState} from 'react';
 import ReactDOM from 'react-dom';
+
 import './index.scss';
 
 
@@ -148,167 +149,114 @@ const SHAPES = [['heart', `#heart {
 }`]];
 
 
-class App extends Component{
+function App (props) {
 
-  constructor () {
-    super();
-    this.state = {
-      activeIndex: 0,
-      lastActive: undefined,
-      direction: 0
-    }
-    this.update = this.update.bind(this);
-  }
+  const [app, updateApp] = useState({ currentIndex: 0, lastIndex: -1, direction: 0 });
 
-  update (newIndex, lastIndex, newDirection) {
-    this.setState({ activeIndex: newIndex,
-                    lastActive: lastIndex,
-                    direction: newDirection });
-  }
+  return (
 
-  render () {
+    <div className="wrapper">
 
-    if(this.state.lastActive === undefined) this.state.lastActive = -1;
-
-    return (
-
-      <div className="wrapper">
-
-        <div className="intro">
-            <h1>“The Shapes of CSS”</h1>
-            <h2>from CSS-Tricks</h2>
-            <p>an incredibly clever article written by <span>Chris Coyier</span>,</p>
-            <p>shamelessly copied (only a little part) by me</p>
-        </div>
-
-        <Carousel parentUpdate={ this.update } shapes={this.props.shapes} />
-
-        <Code direction={ this.state.direction } lastShape={ this.props.shapes[this.state.lastActive] } currentShape={ this.props.shapes[this.state.activeIndex] } shapes={this.props.shapes}/>
-
+      <div className="intro">
+          <h1>“The Shapes of CSS”</h1>
+          <h2>from CSS-Tricks</h2>
+          <p>an incredibly clever article written by <span>Chris Coyier</span>,</p>
+          <p>shamelessly copied (only a little part) by me</p>
       </div>
 
-    )
+      <Carousel direction={ app.direction } currentIndex={ app.currentIndex } lastIndex={ app.currentIndex } updateApp={ updateApp } shapes={props.shapes} />
 
-  }
+      <Code direction={ app.direction } lastShape={ props.shapes[app.lastIndex] } currentShape={ props.shapes[app.currentIndex] } shapes={props.shapes}/>
+
+    </div>
+
+  )
 
 }
 
 
-class Carousel extends Component {
+function Carousel (props) {
 
-  constructor () {
-    super();
-    this.state = {
-      currentIndex: 0,
-      lastActive: undefined,
-      direction: 0
-    }
-  }
+  function showNext(index){
 
-  showNext(currentIndex){
-
-    this.state.lastActive = currentIndex < 0 ? 0 : currentIndex === this.props.shapes.length ? this.props.shapes.length - 1 : currentIndex;
-    this.state.currentIndex = currentIndex + 1 === this.props.shapes.length ? 0 : currentIndex + 1;
-    this.props.parentUpdate(this.state.currentIndex, this.state.lastActive, 1);
+    let lastIndex = index < 0 ? 0 : index === props.shapes.length ? props.shapes.length - 1 : index;
+    let currentIndex = index + 1 === props.shapes.length ? 0 : index + 1;
+    props.updateApp({currentIndex, lastIndex, direction: 1});
 
   }
 
-  showPrevious(currentIndex){
+  function showPrevious(index){
 
-    this.state.lastActive = currentIndex < 0 ? 0 : currentIndex;
-    this.state.currentIndex = currentIndex - 1 < 0 ? this.props.shapes.length - 1 : currentIndex - 1;
-    this.props.parentUpdate(this.state.currentIndex, this.state.lastActive, -1);
-
-
-  }
-
-  render = () => {
-
-    return (
-
-      <div className={ "carousel carousel--" + this.props.shapes[this.state.currentIndex][0] }>
-
-        <div onClick={() => this.showPrevious(this.state.currentIndex) } className="controls controls--back"><span></span></div>
-
-        <Slide key={this.props.shapes[this.state.currentIndex]} shape={this.props.shapes[this.state.currentIndex]} />
-
-        <div onClick={() => this.showNext(this.state.currentIndex) } className="controls controls--next"><span></span></div>
-
-      </div>
-
-    )
+    let lastIndex = index < 0 ? 0 : index;
+    let currentIndex = index - 1 < 0 ? props.shapes.length - 1 : index - 1;
+    props.updateApp({currentIndex, lastIndex,  direction: -1});
 
   }
+
+  return (
+
+    <div className={ "carousel carousel--" + props.shapes[props.currentIndex][0] }>
+
+      <div onClick={() => showPrevious(props.currentIndex) } className="controls controls--back"><span></span></div>
+
+      <Slide shape={props.shapes[props.currentIndex]} />
+
+      <div onClick={() => showNext(props.currentIndex) } className="controls controls--next"><span></span></div>
+
+    </div>
+
+  )
 
 }
 
 
-class Slide extends Component {
+function Slide (props) {
 
-  constructor () {
+  const [copyMessage, setCopyMessage] = useState(false);
 
-    super();
-
-    this.state = { displayCopyMessage: false }
-
-  }
-
-  copyCSS(shapeCSS){
+  function copyCSS(shapeCSS){
 
     navigator.clipboard.writeText(shapeCSS).then(() => {
 
       console.log( "Successfully copied CSS to clipboard" );
 
-      this.setState({ displayCopyMessage: true });
+      setCopyMessage(true);
 
-      setTimeout(() => { this.setState({ displayCopyMessage: false }) }, 2000);
+      setTimeout(setCopyMessage, 2000, false);
 
-    }, () => {
-
-      console.log( "Error: couldn't copy to clipboard :(" );
-
-    });
+    }, () => { console.log( "Error: couldn't copy to clipboard :(" ); });
 
   }
 
-  render () {
+  return (
 
-    return (
+    <div key={props.shape[0]} className={ "slide slide--" + props.shape[0] }>
 
-      <div key={this.props.shape[0]} className={ "slide slide--" + this.props.shape[0] }>
+      <h6 className={ "slide__copy-message " + (copyMessage ? 'show' : 'nope') }>I am in your Clipboard!</h6>
 
-        <h6 className={ "slide__copy-message " + (this.state.displayCopyMessage ? 'show' : 'nope') }>I am in your Clipboard!</h6>
-
-        <div onClick={ () => this.copyCSS(this.props.shape[1]) } className={ "slide__shape slide__shape--" + this.props.shape[0] }>
-
-        </div>
+      <div onClick={ () => copyCSS(props.shape[1]) } className={ "slide__shape slide__shape--" + props.shape[0] }>
 
       </div>
 
-    )
+    </div>
 
-  }
+  )
 
 }
 
+function Code (props) {
 
-class Code extends Component {
+  return (
 
-  render(){
+    <div className={"code-wrapper code-wrapper--" + props.currentShape[0]}>
 
-    return(
+      <pre key={props.currentShape[0]} className={ "code code--active" + ( (props.direction < 0) ? " slide-left" : " slide-right") }>{ props.currentShape[1] }</pre>
 
-      <div className={"code-wrapper code-wrapper--" + this.props.currentShape[0]}>
+      { props.lastShape && <pre key={props.lastShape[0]} className={"code code--last" + ( (props.direction < 0) ? " slide-left" : " slide-right")}>{ props.lastShape[1] }</pre> }
 
-        <pre key={this.props.currentShape[0]} className={ "code code--active" + ( (this.props.direction < 0) ? " slide-left" : " slide-right") }>{ this.props.currentShape[1] }</pre>
+    </div>
 
-        { this.props.lastShape && <pre key={this.props.lastShape[0]} className={"code code--last" + ( (this.props.direction < 0) ? " slide-left" : " slide-right")}>{ this.props.lastShape[1] }</pre> }
-
-      </div>
-
-    )
-
-  }
+  )
 
 }
 
