@@ -176,7 +176,7 @@ class App extends Component{
 
         <div className="intro">
             <h1>“The Shapes of CSS”</h1>
-            <h2>from CSS Tricks</h2>
+            <h2>from CSS-Tricks</h2>
             <p>an incredibly clever article written by <span>Chris Coyier</span>,</p>
             <p>shamelessly copied (only a little part) by me</p>
         </div>
@@ -249,7 +249,7 @@ class Slide extends Component {
 
     super();
 
-    this.state = { shapeCopied: false }
+    this.state = { displayCopyMessage: false }
 
   }
 
@@ -259,9 +259,9 @@ class Slide extends Component {
 
       console.log( "Successfully copied CSS to clipboard" );
 
-      this.setState({ shapeCopied: true });
+      this.setState({ displayCopyMessage: true });
 
-      setTimeout(() => { this.setState({ shapeCopied: false }) }, 2000);
+      setTimeout(() => { this.setState({ displayCopyMessage: false }) }, 2000);
 
     }, () => {
 
@@ -277,9 +277,11 @@ class Slide extends Component {
 
       <div key={this.props.shape[0]} className={ "slide slide--" + this.props.shape[0] }>
 
-        <h6 className={ "slide__copy-message " + (this.state.shapeCopied ? 'show' : 'nope') }>I am in your Clipboard!</h6>
+        <h6 className={ "slide__copy-message " + (this.state.displayCopyMessage ? 'show' : 'nope') }>I am in your Clipboard!</h6>
 
-        <div onClick={ () => this.copyCSS(this.props.shape[1]) } className={ "slide__shape slide__shape--" + this.props.shape[0] }></div>
+        <div onClick={ () => this.copyCSS(this.props.shape[1]) } className={ "slide__shape slide__shape--" + this.props.shape[0] }>
+
+        </div>
 
       </div>
 
